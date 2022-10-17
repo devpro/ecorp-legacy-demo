@@ -14,7 +14,7 @@ variables:
   # CONTAINER_REGISTRY_DOMAIN
   # CONTAINER_REGISTRY_FOLDER
   # container information
-  CONTAINER_REPOSITORY: "$CONTAINER_REGISTRY_DOMAIN/$CONTAINER_REGISTRY_FOLDER/ecorp-legacy-aspnetmvcdemo"
+  CONTAINER_REPOSITORY: "${CONTAINER_REGISTRY_DOMAIN}/${CONTAINER_REGISTRY_FOLDER}/ecorp-legacy-aspnetmvcdemo"
   CONTAINER_APP_VERSION: "1.0.$CI_PIPELINE_ID"
 
 code-quality:
@@ -46,10 +46,10 @@ container-image:
     - windows
     - windows-1809
   script:
-    - docker build -f dotnet/src/AspNetMvcDemoWebApp/Dockerfile -t $CONTAINER_REPOSITORY:$CONTAINER_APP_VERSION .
+    - docker build -f dotnet/src/AspNetMvcDemoWebApp/Dockerfile -t ${CONTAINER_REPOSITORY}:${CONTAINER_APP_VERSION} .
     - docker login -u $CONTAINER_REGISTRY_USER -p $CONTAINER_REGISTRY_PASSWD $CONTAINER_REGISTRY_DOMAIN
-    - docker save --output images.tar $CONTAINER_REPOSITORY:$CONTAINER_APP_VERSION
-    - if [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then docker push $CONTAINER_REPOSITORY:$CONTAINER_APP_VERSION; fi
+    - docker save --output images.tar ${CONTAINER_REPOSITORY}:${CONTAINER_APP_VERSION}
+    - if [ "${CI_COMMIT_BRANCH}" == "${CI_DEFAULT_BRANCH}" ]; then docker push ${CONTAINER_REPOSITORY}:${CONTAINER_APP_VERSION}; fi
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: always
