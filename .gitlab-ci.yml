@@ -26,7 +26,7 @@ code-quality:
     - windows-1809
   script:
     - Invoke-WebRequest https://download.visualstudio.microsoft.com/download/pr/7afca223-55d2-470a-8edc-6a1739ae3252/abd170b4b0ec15ad0222a809b761a036/ndp48-x86-x64-allos-enu.exe -O ndp48-x86-x64-allos-enu.exe
-    - ndp48-x86-x64-allos-enu.exe /q /norestart
+    - .\ndp48-x86-x64-allos-enu.exe /q /norestart
     - cd dotnet
     # get .NET dependencies
     - nuget restore
