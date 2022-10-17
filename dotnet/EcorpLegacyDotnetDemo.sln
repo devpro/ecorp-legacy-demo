@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetMvcDemoWebApp", "src\AspNetMvcDemoWebApp\AspNetMvcDemoWebApp.csproj", "{D0DECDFB-B0A2-4E1F-B6DB-FED7118DEFA1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetMvcDemoWebApp.UnitTests", "test\AspNetMvcDemoWebApp.UnitTests\AspNetMvcDemoWebApp.UnitTests.csproj", "{D1B970D7-5DCF-459B-AA9A-0A7B87C9E9AB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Applications", "1 - Applications", "{2EF24106-C434-4C3F-9146-0878FF3BB19F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0 - Solutions Items", "0 - Solutions Items", "{75F4D0C8-A16F-4E5D-B9CF-627D8E8FADBE}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D0DECDFB-B0A2-4E1F-B6DB-FED7118DEFA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0DECDFB-B0A2-4E1F-B6DB-FED7118DEFA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0DECDFB-B0A2-4E1F-B6DB-FED7118DEFA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0DECDFB-B0A2-4E1F-B6DB-FED7118DEFA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1B970D7-5DCF-459B-AA9A-0A7B87C9E9AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1B970D7-5DCF-459B-AA9A-0A7B87C9E9AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1B970D7-5DCF-459B-AA9A-0A7B87C9E9AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1B970D7-5DCF-459B-AA9A-0A7B87C9E9AB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D0DECDFB-B0A2-4E1F-B6DB-FED7118DEFA1} = {2EF24106-C434-4C3F-9146-0878FF3BB19F}
+		{D1B970D7-5DCF-459B-AA9A-0A7B87C9E9AB} = {2EF24106-C434-4C3F-9146-0878FF3BB19F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9E669D34-EF35-42BD-876A-8AFD5A025A78}
+	EndGlobalSection
+EndGlobal
