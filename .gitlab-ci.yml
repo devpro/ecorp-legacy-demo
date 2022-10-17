@@ -31,7 +31,8 @@ code-quality:
     # get .NET dependencies
     - nuget restore
     # builds the .NET solution
-    - msbuild
+    - C:\Windows\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe
+    # - msbuild
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: always
