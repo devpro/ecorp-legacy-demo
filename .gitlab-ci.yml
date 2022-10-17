@@ -1,0 +1,80 @@
+include:
+ - remote: 'https://gitlab.com/neuvector/gitlab-plugin/-/raw/master/scan.yml'
+
+stages:
+  - integrate
+  - package
+  - scan
+  # - deploy
+
+variables:
+  # defined in GitLab project configuration (Settings > CI/CD > Variables)
+  # CONTAINER_REGISTRY_PASSWD
+  # CONTAINER_REGISTRY_USER
+  # CONTAINER_REGISTRY_DOMAIN
+  # CONTAINER_REGISTRY_FOLDER
+  # container information
+  CONTAINER_REPOSITORY: "$CONTAINER_REGISTRY_DOMAIN/$CONTAINER_REGISTRY_FOLDER/ecorp-legacy-aspnetmvcdemo"
+  CONTAINER_APP_VERSION: "1.0.$CI_PIPELINE_ID"
+
+code-quality:
+  image: mcr.microsoft.com/dotnet/framework/sdk:4.8
+  stage: integrate
+  script:
+    - cd dotnet
+    # get .NET dependencies
+    - nuget restore
+    # builds the .NET solution
+    - msbuild
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: always
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: always
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: manual
+      allow_failure: true
+
+container-image:
+  stage: package
+  tags:
+    - shared-windows
+    - windows
+    - windows-1809
+  script:
+    - docker build -f dotnet/src/AspNetMvcDemoWebApp/Dockerfile -t $CONTAINER_REPOSITORY:$CONTAINER_APP_VERSION .
+    - docker login -u $CONTAINER_REGISTRY_USER -p $CONTAINER_REGISTRY_PASSWD $CONTAINER_REGISTRY_DOMAIN
+    - docker save --output images.tar $CONTAINER_REPOSITORY:$CONTAINER_APP_VERSION
+    - if [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then docker push $CONTAINER_REPOSITORY:$CONTAINER_APP_VERSION; fi
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: always
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: always
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: manual
+  artifacts:
+    expire_in: 1 hours
+    paths:
+      - images.tar
+
+neuvector_scan:
+  stage: scan
+  variables:
+    scan_local_image: "true"
+    image_tar: "images.tar"
+    image_repo: $CONTAINER_REPOSITORY
+    image_tag: $CONTAINER_APP_VERSION
+    nv_registry_user: $CONTAINER_REGISTRY_USER
+    nv_registry_password: $CONTAINER_REGISTRY_PASSWD
+    scan_layers: "false"
+    high_vul_to_fail: 15
+    medium_vul_to_fail: 9
+    vul_names_to_fail: "CVE-2020-1971, CVE-2020-1972"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: always
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: always
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: manual
