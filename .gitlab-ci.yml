@@ -18,8 +18,12 @@ variables:
   CONTAINER_APP_VERSION: "1.0.$CI_PIPELINE_ID"
 
 code-quality:
-  image: mcr.microsoft.com/dotnet/framework/sdk:4.8
   stage: integrate
+  image: mcr.microsoft.com/dotnet/framework/sdk:4.8
+  tags:
+    - shared-windows
+    - windows
+    - windows-1809
   script:
     - cd dotnet
     # get .NET dependencies
