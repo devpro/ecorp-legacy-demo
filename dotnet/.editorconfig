@@ -1,0 +1,29 @@
+root = true
+
+[*]
+indent_style = space
+insert_final_newline = true
+
+[*.{cs,csx,vb,vbx,sln}]
+end_of_line = crlf
+indent_size = 4
+charset = utf-8-bom
+trim_trailing_whitespace = true
+
+[*.md]
+end_of_line = lf
+indent_size = 2
+trim_trailing_whitespace = false
+
+[*.json]
+end_of_line = lf
+indent_size = 2
+
+[*.{csproj,props,targets,ruleset,config,nuspec,resx,runsettings,vsixmanifest,vsct}]
+end_of_line = crlf
+indent_size = 2
+
+[*.{yml,yaml}]
+end_of_line = lf
+indent_size = 2
+trim_trailing_whitespace = true
