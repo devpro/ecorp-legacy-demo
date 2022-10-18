@@ -33,8 +33,8 @@ code-quality:
     # https://www.manageengine.com/products/desktop-central/software-installation/silent_install_Microsoft-.NET-Framework-4.8.html
     #- Invoke-WebRequest https://download.visualstudio.microsoft.com/download/pr/7afca223-55d2-470a-8edc-6a1739ae3252/abd170b4b0ec15ad0222a809b761a036/ndp48-x86-x64-allos-enu.exe -O ndp48-x86-x64-allos-enu.exe
     #- .\ndp48-x86-x64-allos-enu.exe /q /norestart
-    # installs Visual Studio 2022 Build tools
-    - choco install -y visualstudio2022buildtools
+    # installs Visual Studio 2022 Build tools & NuGet CLI
+    - choco install -y visualstudio2022buildtools nuget.commandline
   script:
     - cd dotnet
     # downloads .NET dependencies

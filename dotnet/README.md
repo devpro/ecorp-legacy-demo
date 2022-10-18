@@ -1,5 +1,8 @@
 # E Corp legacy .NET applications
 
+[![Docker Image Version (latest semver)](https://img.shields.io/docker/v/devprofr/ecorp-legacy-aspnetmvcdemo?label=Docker)](https://hub.docker.com/r/devprofr/ecorp-legacy-aspnetmvcdemo)
+[![GitLab Pipeline Status](https://gitlab.com/devpro-labs/ecorp-legacy-demo/badges/main/pipeline.svg)](https://gitlab.com/devpro-labs/ecorp-legacy-demo/-/pipelines)
+
 ## Local development
 
 * Install SDKs for .NET 4.8
