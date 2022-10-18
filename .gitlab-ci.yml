@@ -25,14 +25,19 @@ code-quality:
     - windows
     - windows-1809
   script:
-    - Invoke-WebRequest https://download.visualstudio.microsoft.com/download/pr/7afca223-55d2-470a-8edc-6a1739ae3252/abd170b4b0ec15ad0222a809b761a036/ndp48-x86-x64-allos-enu.exe -O ndp48-x86-x64-allos-enu.exe
-    - .\ndp48-x86-x64-allos-enu.exe /q /norestart
+    # installs chocolatey (needed later)
+    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))  
+    # installs .NET Framework 4.8 (https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48)
+    # developer pack link (https://dotnet.microsoft.com/en-us/download/dotnet-framework/thank-you/net48-developer-pack-offline-installer) is a redirect link (can't be downloaded like this) so we use chocolatey
+    choco install -y netfx-4.8-devpack
+    # https://www.manageengine.com/products/desktop-central/software-installation/silent_install_Microsoft-.NET-Framework-4.8.html
+    #- Invoke-WebRequest https://download.visualstudio.microsoft.com/download/pr/7afca223-55d2-470a-8edc-6a1739ae3252/abd170b4b0ec15ad0222a809b761a036/ndp48-x86-x64-allos-enu.exe -O ndp48-x86-x64-allos-enu.exe
+    #- .\ndp48-x86-x64-allos-enu.exe /q /norestart
     - cd dotnet
-    # get .NET dependencies
+    # downloads .NET dependencies
     - nuget restore
     # builds the .NET solution
     - C:\Windows\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe
-    # - msbuild
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: always
@@ -49,7 +54,7 @@ container-image:
     - windows
     - windows-1809
   script:
-    - docker build -f dotnet/src/AspNetMvcDemoWebApp/Dockerfile -t ${CONTAINER_REPOSITORY}:${CONTAINER_APP_VERSION} .
+    - docker build -f dotnet/src/AspNetMvcDemoWebApp/Dockerfile -t ${CONTAINER_REPOSITORY}:${CONTAINER_APP_VERSION} dotnet/
     - docker login -u $CONTAINER_REGISTRY_USER -p $CONTAINER_REGISTRY_PASSWD $CONTAINER_REGISTRY_DOMAIN
     - docker save --output images.tar ${CONTAINER_REPOSITORY}:${CONTAINER_APP_VERSION}
     - if [ "${CI_COMMIT_BRANCH}" == "${CI_DEFAULT_BRANCH}" ]; then docker push ${CONTAINER_REPOSITORY}:${CONTAINER_APP_VERSION}; fi
