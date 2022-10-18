@@ -40,7 +40,7 @@ code-quality:
     # downloads .NET dependencies
     - nuget restore
     # builds the .NET solution
-    - "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.exe"
+    - "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe"
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: always
@@ -68,6 +68,7 @@ container-image:
       when: always
     - if: $CI_PIPELINE_SOURCE == "web"
       when: manual
+  timeout: 1h 30m
   artifacts:
     expire_in: 1 hours
     paths:
