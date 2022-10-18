@@ -40,7 +40,7 @@ code-quality:
     # downloads .NET dependencies
     - nuget restore
     # builds the .NET solution
-    - & 'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\amd64\MSBuild.exe'
+    - "& 'C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe'"
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: always
