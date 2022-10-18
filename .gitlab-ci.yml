@@ -24,7 +24,7 @@ code-quality:
     - shared-windows
     - windows
     - windows-1809
-  script:
+  before_script:
     # installs chocolatey (needed later)
     - Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))  
     # installs .NET Framework 4.8 (https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48)
@@ -33,11 +33,14 @@ code-quality:
     # https://www.manageengine.com/products/desktop-central/software-installation/silent_install_Microsoft-.NET-Framework-4.8.html
     #- Invoke-WebRequest https://download.visualstudio.microsoft.com/download/pr/7afca223-55d2-470a-8edc-6a1739ae3252/abd170b4b0ec15ad0222a809b761a036/ndp48-x86-x64-allos-enu.exe -O ndp48-x86-x64-allos-enu.exe
     #- .\ndp48-x86-x64-allos-enu.exe /q /norestart
+    # installs Visual Studio 2022 Build tools
+    - choco install visualstudio2022buildtools
+  script:
     - cd dotnet
     # downloads .NET dependencies
     - nuget restore
     # builds the .NET solution
-    - C:\Windows\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe
+    - "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.exe"
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: always
