@@ -17,24 +17,50 @@ variables:
   CONTAINER_REPOSITORY: "${CONTAINER_REGISTRY_DOMAIN}/${CONTAINER_REGISTRY_FOLDER}/ecorp-legacy-aspnetmvcdemo"
   CONTAINER_APP_VERSION: "1.0.$CI_PIPELINE_ID"
 
+#code-quality:
+#  stage: integrate
+#  image: mcr.microsoft.com/dotnet/framework/sdk:4.8
+#  tags:
+#    - shared-windows
+#    - windows
+#    - windows-1809
+#  before_script:
+#    # installs chocolatey (needed later)
+#    - Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))  
+#    # installs .NET Framework 4.8 (https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48)
+#    # developer pack link (https://dotnet.microsoft.com/en-us/download/dotnet-framework/thank-you/net48-developer-pack-offline-installer) is a redirect link (can't be downloaded like this) so we use chocolatey
+#    - choco install -y netfx-4.8-devpack
+#    # https://www.manageengine.com/products/desktop-central/software-installation/silent_install_Microsoft-.NET-Framework-4.8.html
+#    #- Invoke-WebRequest https://download.visualstudio.microsoft.com/download/pr/7afca223-55d2-470a-8edc-6a1739ae3252/abd170b4b0ec15ad0222a809b761a036/ndp48-x86-x64-allos-enu.exe -O ndp48-x86-x64-allos-enu.exe
+#    #- .\ndp48-x86-x64-allos-enu.exe /q /norestart
+#    # installs Visual Studio 2022 Build tools & NuGet CLI
+#    - choco install -y visualstudio2022buildtools nuget.commandline
+#  script:
+#    - cd dotnet
+#    # downloads .NET dependencies
+#    - nuget restore
+#    # builds the .NET solution
+#    - "& 'C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe'"
+#  rules:
+#    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+#      when: always
+#    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+#      when: always
+#    - if: $CI_PIPELINE_SOURCE == "web"
+#      when: manual
+#      allow_failure: true
+
 code-quality:
   stage: integrate
   image: mcr.microsoft.com/dotnet/framework/sdk:4.8
   tags:
-    - shared-windows
-    - windows
-    - windows-1809
+    # custom runner
+    - net48
   before_script:
     # installs chocolatey (needed later)
     - Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))  
-    # installs .NET Framework 4.8 (https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48)
-    # developer pack link (https://dotnet.microsoft.com/en-us/download/dotnet-framework/thank-you/net48-developer-pack-offline-installer) is a redirect link (can't be downloaded like this) so we use chocolatey
-    - choco install -y netfx-4.8-devpack
-    # https://www.manageengine.com/products/desktop-central/software-installation/silent_install_Microsoft-.NET-Framework-4.8.html
-    #- Invoke-WebRequest https://download.visualstudio.microsoft.com/download/pr/7afca223-55d2-470a-8edc-6a1739ae3252/abd170b4b0ec15ad0222a809b761a036/ndp48-x86-x64-allos-enu.exe -O ndp48-x86-x64-allos-enu.exe
-    #- .\ndp48-x86-x64-allos-enu.exe /q /norestart
-    # installs Visual Studio 2022 Build tools & NuGet CLI
-    - choco install -y visualstudio2022buildtools nuget.commandline
+    # installs Visual Studio 2022 Build tools
+    - choco install -y visualstudio2022buildtools
   script:
     - cd dotnet
     # downloads .NET dependencies
@@ -53,9 +79,8 @@ code-quality:
 container-image:
   stage: package
   tags:
-    - shared-windows
     - windows
-    - windows-1809
+    - docker
   script:
     - docker build -f dotnet/src/AspNetMvcDemoWebApp/Dockerfile -t ${CONTAINER_REPOSITORY}:${CONTAINER_APP_VERSION} dotnet/
     - docker login -u $CONTAINER_REGISTRY_USER -p $CONTAINER_REGISTRY_PASSWD $CONTAINER_REGISTRY_DOMAIN
@@ -76,6 +101,8 @@ container-image:
 
 neuvector_scan:
   stage: scan
+  tags:
+    - docker
   variables:
     scan_local_image: "true"
     image_tar: "images.tar"
