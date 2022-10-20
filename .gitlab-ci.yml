@@ -126,7 +126,7 @@ neuvector_scan:
     vul_names_to_fail: "CVE-2020-1971, CVE-2020-1972"
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: always
+      when: manual
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: always
     - if: $CI_PIPELINE_SOURCE == "web"
