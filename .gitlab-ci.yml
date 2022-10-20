@@ -5,7 +5,7 @@ stages:
   - integrate
   - package
   - scan
-  # - deploy
+  #- deploy
 
 variables:
   # defined in GitLab project configuration (Settings > CI/CD > Variables)
@@ -78,11 +78,11 @@ code-quality:
 
 container-image:
   stage: package
-  image: docker:20.10-windowsservercore-1809
+  #image: docker:20.10-windowsservercore-1809
   tags:
+    - shared-windows
     - windows
-    - net48
-    - docker
+    - windows-1809
   before_script:
     - docker info
   script:
@@ -99,15 +99,16 @@ container-image:
       when: manual
   timeout: 1h 30m
   artifacts:
-    expire_in: 1 hours
+    expire_in: 2 hours
     paths:
       - images.tar
 
 neuvector_scan:
   stage: scan
   tags:
-    - linux
-    - docker
+    - shared-windows
+    - windows
+    - windows-1809
   variables:
     scan_local_image: "true"
     image_tar: "images.tar"
