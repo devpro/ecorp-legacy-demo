@@ -69,7 +69,7 @@ code-quality:
     - "& 'C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe'"
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: manual
+      when: always
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: always
     - if: $CI_PIPELINE_SOURCE == "web"
@@ -96,7 +96,7 @@ container-image:
     - if [ "${CI_COMMIT_BRANCH}" == "${CI_DEFAULT_BRANCH}" ]; then docker push ${CONTAINER_REPOSITORY}:${CONTAINER_APP_VERSION}; fi
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: manual
+      when: always
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: always
     - if: $CI_PIPELINE_SOURCE == "web"
@@ -126,7 +126,7 @@ neuvector_scan:
     vul_names_to_fail: "CVE-2020-1971, CVE-2020-1972"
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: manual
+      when: always
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: always
     - if: $CI_PIPELINE_SOURCE == "web"
