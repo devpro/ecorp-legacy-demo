@@ -78,7 +78,7 @@ code-quality:
 
 container-image:
   stage: package
-  image: docker:20.10.12-dind
+  image: docker:20.10-windowsservercore-1809
   tags:
     - windows
     - net48
@@ -106,6 +106,7 @@ container-image:
 neuvector_scan:
   stage: scan
   tags:
+    - linux
     - docker
   variables:
     scan_local_image: "true"
