@@ -69,7 +69,7 @@ code-quality:
     - "& 'C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe'"
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: always
+      when: manual
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: always
     - if: $CI_PIPELINE_SOURCE == "web"
@@ -78,11 +78,15 @@ code-quality:
 
 container-image:
   stage: package
-  #image: docker:20.10-windowsservercore-1809
+  # https://github.com/docker-library/docker/blob/master/20.10/windows/windowsservercore-1809/Dockerfile
+  image: docker:20.10-windowsservercore-1809
+  #tags:
+  #  - shared-windows
+  #  - windows
+  #  - windows-1809
   tags:
-    - shared-windows
-    - windows
-    - windows-1809
+    # custom runner
+    - net48
   before_script:
     - docker info
   script:
@@ -92,7 +96,7 @@ container-image:
     - if [ "${CI_COMMIT_BRANCH}" == "${CI_DEFAULT_BRANCH}" ]; then docker push ${CONTAINER_REPOSITORY}:${CONTAINER_APP_VERSION}; fi
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: always
+      when: manual
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: always
     - if: $CI_PIPELINE_SOURCE == "web"
@@ -122,7 +126,7 @@ neuvector_scan:
     vul_names_to_fail: "CVE-2020-1971, CVE-2020-1972"
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: always
+      when: manual
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: always
     - if: $CI_PIPELINE_SOURCE == "web"
