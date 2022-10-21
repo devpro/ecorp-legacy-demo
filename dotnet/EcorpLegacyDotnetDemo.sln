@@ -14,8 +14,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0 - Solutions Items", "0 - 
 		.dockerignore = .dockerignore
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
-		..\.gitlab-ci.yml = ..\.gitlab-ci.yml
 		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "global", "global", "{F529F805-2D70-4D06-904F-9AAD1417C57C}"
+	ProjectSection(SolutionItems) = preProject
+		..\.gitlab-ci.yml = ..\.gitlab-ci.yml
+		..\LICENSE = ..\LICENSE
+		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Global
@@ -39,6 +45,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{D0DECDFB-B0A2-4E1F-B6DB-FED7118DEFA1} = {2EF24106-C434-4C3F-9146-0878FF3BB19F}
 		{D1B970D7-5DCF-459B-AA9A-0A7B87C9E9AB} = {2EF24106-C434-4C3F-9146-0878FF3BB19F}
+		{F529F805-2D70-4D06-904F-9AAD1417C57C} = {75F4D0C8-A16F-4E5D-B9CF-627D8E8FADBE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9E669D34-EF35-42BD-876A-8AFD5A025A78}
