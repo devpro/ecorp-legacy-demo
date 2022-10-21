@@ -1,5 +1,7 @@
 # E Corp Legacy Demo
 
+[![GitLab Pipeline Status](https://gitlab.com/devpro-labs/ecorp-legacy-demo/badges/main/pipeline.svg)](https://gitlab.com/devpro-labs/ecorp-legacy-demo/-/pipelines)
+
 Demonstration of legacy application E Corp (fake) company.
 
 ## Content

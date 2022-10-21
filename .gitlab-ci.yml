@@ -1,40 +1,47 @@
-include:
- - remote: 'https://gitlab.com/neuvector/gitlab-plugin/-/raw/master/scan.yml'
+# GitLab pipeline (configured in "Settings" > "CI/CD")
+# - Runners
+#   - Can be run on GitLab shared (https://about.gitlab.com/blog/2020/01/21/windows-shared-runner-beta/) or specific runners
+# - Variables
+#   - CONTAINER_REGISTRY_PASSWD
+#   - CONTAINER_REGISTRY_USER
+#   - CONTAINER_REGISTRY_DOMAIN
+#   - CONTAINER_REGISTRY_FOLDER
+# ===============
+
+variables:
+  CONTAINER_REPOSITORY: "${CONTAINER_REGISTRY_DOMAIN}/${CONTAINER_REGISTRY_FOLDER}/ecorp-legacy-aspnetmvcdemo"
+  CONTAINER_APP_VERSION: "1.0.$CI_PIPELINE_ID"
 
 stages:
   - integrate
   - package
-  - scan
-  # - deploy
 
-variables:
-  # defined in GitLab project configuration (Settings > CI/CD > Variables)
-  # CONTAINER_REGISTRY_PASSWD
-  # CONTAINER_REGISTRY_USER
-  # CONTAINER_REGISTRY_DOMAIN
-  # CONTAINER_REGISTRY_FOLDER
-  # container information
-  CONTAINER_REPOSITORY: "${CONTAINER_REGISTRY_DOMAIN}/${CONTAINER_REGISTRY_FOLDER}/ecorp-legacy-aspnetmvcdemo"
-  CONTAINER_APP_VERSION: "1.0.$CI_PIPELINE_ID"
+# Continuous Integration
+# ---------------------
 
 code-quality:
   stage: integrate
+  # [Gilab-SharedRunner] image won't be used
   image: mcr.microsoft.com/dotnet/framework/sdk:4.8
   tags:
-    - shared-windows
     - windows
     - windows-1809
+    # [Gilab-SpecificRunner]
+    - azurevm
+    - net48
+    # [Gilab-SharedRunner]
+    #- shared-windows
   before_script:
     # installs chocolatey (needed later)
     - Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))  
-    # installs .NET Framework 4.8 (https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48)
+    # [Gilab-SharedRunner] installs .NET Framework 4.8 (https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48)
+    # .runtime is not enough (https://www.manageengine.com/products/desktop-central/software-installation/silent_install_Microsoft-.NET-Framework-4.8.html)
     # developer pack link (https://dotnet.microsoft.com/en-us/download/dotnet-framework/thank-you/net48-developer-pack-offline-installer) is a redirect link (can't be downloaded like this) so we use chocolatey
-    - choco install -y netfx-4.8-devpack
-    # https://www.manageengine.com/products/desktop-central/software-installation/silent_install_Microsoft-.NET-Framework-4.8.html
-    #- Invoke-WebRequest https://download.visualstudio.microsoft.com/download/pr/7afca223-55d2-470a-8edc-6a1739ae3252/abd170b4b0ec15ad0222a809b761a036/ndp48-x86-x64-allos-enu.exe -O ndp48-x86-x64-allos-enu.exe
-    #- .\ndp48-x86-x64-allos-enu.exe /q /norestart
-    # installs Visual Studio 2022 Build tools & NuGet CLI
-    - choco install -y visualstudio2022buildtools nuget.commandline
+    #- choco install -y netfx-4.8-devpack
+    # [Gilab-SharedRunner] installs nuget
+    #- choco install -y Nuget.CommandLine
+    # installs Visual Studio 2022 Build tools
+    - choco install -y visualstudio2022buildtools
   script:
     - cd dotnet
     # downloads .NET dependencies
@@ -50,16 +57,27 @@ code-quality:
       when: manual
       allow_failure: true
 
+# Continuous Delivery (Packaging)
+# -------------------------------
+
 container-image:
   stage: package
+  # [Gilab-SharedRunner] image won't be used
+  # https://github.com/docker-library/docker/blob/master/20.10/windows/windowsservercore-1809/Dockerfile
+  image: docker:20.10-windowsservercore-1809
   tags:
-    - shared-windows
     - windows
     - windows-1809
+    # [Gilab-SpecificRunner]
+    - azurevm
+    - docker
+    # [Gilab-SharedRunner]
+    #- shared-windows
+  before_script:
+    - docker info
   script:
     - docker build -f dotnet/src/AspNetMvcDemoWebApp/Dockerfile -t ${CONTAINER_REPOSITORY}:${CONTAINER_APP_VERSION} dotnet/
     - docker login -u $CONTAINER_REGISTRY_USER -p $CONTAINER_REGISTRY_PASSWD $CONTAINER_REGISTRY_DOMAIN
-    - docker save --output images.tar ${CONTAINER_REPOSITORY}:${CONTAINER_APP_VERSION}
     - if [ "${CI_COMMIT_BRANCH}" == "${CI_DEFAULT_BRANCH}" ]; then docker push ${CONTAINER_REPOSITORY}:${CONTAINER_APP_VERSION}; fi
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
@@ -68,29 +86,5 @@ container-image:
       when: always
     - if: $CI_PIPELINE_SOURCE == "web"
       when: manual
+  # pulling sdk images can be long on GitLab shared runner
   timeout: 1h 30m
-  artifacts:
-    expire_in: 1 hours
-    paths:
-      - images.tar
-
-neuvector_scan:
-  stage: scan
-  variables:
-    scan_local_image: "true"
-    image_tar: "images.tar"
-    image_repo: $CONTAINER_REPOSITORY
-    image_tag: $CONTAINER_APP_VERSION
-    nv_registry_user: $CONTAINER_REGISTRY_USER
-    nv_registry_password: $CONTAINER_REGISTRY_PASSWD
-    scan_layers: "false"
-    high_vul_to_fail: 15
-    medium_vul_to_fail: 9
-    vul_names_to_fail: "CVE-2020-1971, CVE-2020-1972"
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: always
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: always
-    - if: $CI_PIPELINE_SOURCE == "web"
-      when: manual
