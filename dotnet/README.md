@@ -3,6 +3,20 @@
 [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/devprofr/ecorp-legacy-aspnetmvcdemo?label=Docker)](https://hub.docker.com/r/devprofr/ecorp-legacy-aspnetmvcdemo)
 [![GitLab Pipeline Status](https://gitlab.com/devpro-labs/ecorp-legacy-demo/badges/main/pipeline.svg)](https://gitlab.com/devpro-labs/ecorp-legacy-demo/-/pipelines)
 
+## Usage
+
+* You can try with locally the container image from the registry (Docker Hub), from a Windows terminal as an Administrator
+
+```dos
+# dowloads locally a new image
+docker pull devprofr/ecorp-legacy-aspnetmvcdemo:1.0.678482630
+
+# runs the image locally
+docker -c win run -it --rm -p 9002:80 devprofr/ecorp-legacy-aspnetmvcdemo:1.0.678482630
+```
+
+* Open the local instance [localhost:9002](http://localhost:9002/)
+
 ## Local development
 
 * Install SDKs for .NET 4.8
